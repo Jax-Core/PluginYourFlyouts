@@ -1,0 +1,9 @@
+﻿  FlyoutHandler.cpp
+  FlyoutTrigger.cpp
+  YourFlyouts.cpp
+     Creating library ..\build\Release\64-bit\YourFlyouts.lib and object ..\build\Release\64-bit\YourFlyouts.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 184 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  YourFlyouts.vcxproj -> D:\RainmeterPlugins\YourFlyouts\build\Release\64-bit\YourFlyouts.dll
