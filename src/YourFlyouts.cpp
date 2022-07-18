@@ -16,7 +16,6 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD ul_reason_for_call, LPWORD lpReserved
 	return TRUE;
 }
 
-
 FlyoutHandler* flyoutHandler = NULL;
 
 PLUGIN_EXPORT void Initialize(void** data, void* rm)

@@ -51,6 +51,7 @@ void FlyoutTrigger::Unhook()
 
 void FlyoutTrigger::TriggerFlyout(TriggerType tType)
 {
+	// parentHandler->VerifyNativeFlyoutCreated();
 	switch (tType) {
 	case TriggerType::Volume:
 		instance->OnVolumeChanged();
@@ -88,7 +89,7 @@ LRESULT FlyoutTrigger::SkinWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 	if (msg->message != shellMessageHookId)
 		return CallNextHookEx(NULL, nCode, wParam, lParam);
 
-	RmLogF(instance->parentHandler->measures[0]->rm, LOG_NOTICE, L"Message recieved: %ld", msg->wParam);
+	// RmLogF(instance->parentHandler->measures[0]->rm, LOG_NOTICE, L"Message recieved: %ld", msg->wParam);
 
 	switch (msg->wParam) {
 	case 55:

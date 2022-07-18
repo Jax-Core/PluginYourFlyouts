@@ -145,6 +145,8 @@ void FlyoutHandler::WinEventProc(
 	{
 		TCHAR className[MAX_CLASS_NAME];
 		GetClassName(hwnd, className, MAX_CLASS_NAME);
+		// instance->Log(LOG_NOTICE, L"Create event raised!");
+		// instance->Log(LOG_NOTICE, className);
 		if (_wcsicmp(className, L"NativeHWNDHost") == 0)
 		{
 			instance->_hasFlyoutCreated = instance->GetAllInfos();
@@ -189,7 +191,7 @@ void FlyoutHandler::OnFlyoutShown()
 
 void FlyoutHandler::OnFlyoutDestroyed()
 {
-	Log(LOG_NOTICE, L"Native flyout destroyed!");
+	Log(LOG_DEBUG, L"Native flyout destroyed!");
 	Unhook();
 }
 
@@ -203,7 +205,8 @@ DWORD FlyoutHandler::GetShellProcessId()
 {
 	HWND shellWnd = GetShellWindow();
 	DWORD pId;
-	return GetWindowThreadProcessId(shellWnd, &pId);
+	GetWindowThreadProcessId(shellWnd, &pId);
+	return pId;
 }
 
 bool FlyoutHandler::IsShellProcess()

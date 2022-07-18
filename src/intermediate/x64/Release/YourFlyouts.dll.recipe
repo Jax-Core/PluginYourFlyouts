@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\RainmeterPlugins\YourFlyouts\build\Release\64-bit\YourFlyouts.dll</FullPath>
+      <FullPath>D:\RainmeterPlugins\PluginYourFlyouts\build\Release\64-bit\YourFlyouts.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
