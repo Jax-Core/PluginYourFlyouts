@@ -7,11 +7,13 @@
     <ClCompile Include="FlyoutHandler.cpp" />
     <ClCompile Include="YourFlyouts.cpp" />
     <ClCompile Include="FlyoutTrigger.cpp" />
+    <ClCompile Include="DispatchTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FlyoutHandler.h" />
     <ClInclude Include="YourFlyouts.h" />
     <ClInclude Include="FlyoutTrigger.h" />
+    <ClInclude Include="DispatchTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.gitignore" />

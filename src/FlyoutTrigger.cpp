@@ -1,14 +1,20 @@
+#include "YourFlyouts.h"
 #include "FlyoutTrigger.h"
 #include "FlyoutHandler.h"
+#include "FlightModeWatcher.h"
 
 extern HINSTANCE hInstance;
 
 FlyoutTrigger* FlyoutTrigger::instance;
 FlyoutHandler* FlyoutTrigger::parentHandler;
+TriggerType FlyoutTrigger::triggerType = TriggerType::None;
 UINT FlyoutTrigger::shellMessageHookId;
 
-FlyoutTrigger::FlyoutTrigger()
+FlyoutTrigger::FlyoutTrigger(Measure* measure)
 {
+	instance = this;
+	RegisterShellHook(measure);
+	Hook(measure);
 }
 
 FlyoutTrigger::~FlyoutTrigger()
@@ -51,33 +57,7 @@ void FlyoutTrigger::Unhook()
 
 void FlyoutTrigger::TriggerFlyout(TriggerType tType)
 {
-	// parentHandler->VerifyNativeFlyoutCreated();
-	switch (tType) {
-	case TriggerType::Volume:
-		instance->OnVolumeChanged();
-		break;
-	case TriggerType::Media:
-		instance->OnMediaChanged();
-		break;
-	case TriggerType::Brightness:
-		instance->OnBrightnessChanged();
-		break;
-	default:
-		break;
-	}
-}
-
-// dummy proc used for testing
-LRESULT FlyoutTrigger::GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
-{
-	if (nCode < 0)
-		return CallNextHookEx(NULL, nCode, wParam, lParam);
-
-	MSG* msg = (MSG*)lParam;
-	if (msg->message == shellMessageHookId)
-		instance->parentHandler->Log(LOG_NOTICE, L"Message recieved!");
-
-	return CallNextHookEx(NULL, nCode, wParam, lParam);
+	triggerType = tType;
 }
 
 LRESULT FlyoutTrigger::SkinWndProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -119,31 +99,4 @@ LRESULT FlyoutTrigger::SkinWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 	}
 
 	return CallNextHookEx(NULL, nCode, wParam, lParam);
-}
-
-void FlyoutTrigger::OnVolumeChanged()
-{
-	parentHandler->Log(LOG_DEBUG, L"Voulme is changing!");
-	for (auto measure : parentHandler->measures)
-	{
-		RmExecute(measure->skin, measure->volumeChangeAction.c_str());
-	}
-}
-
-void FlyoutTrigger::OnBrightnessChanged()
-{
-	parentHandler->Log(LOG_DEBUG, L"Brightness is changing!");
-	for (auto measure : parentHandler->measures)
-	{
-		RmExecute(measure->skin, measure->brightnessChangeAction.c_str());
-	}
-}
-
-void FlyoutTrigger::OnMediaChanged()
-{
-	parentHandler->Log(LOG_DEBUG, L"Media is changing!");
-	for (auto measure : parentHandler->measures)
-	{
-		RmExecute(measure->skin, measure->mediaChangeAction.c_str());
-	}
 }

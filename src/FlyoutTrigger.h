@@ -1,9 +1,11 @@
 #pragma once
-#include "YourFlyouts.h"
 
+struct Measure;
 class FlyoutHandler;
+class FlightModeWatcher;
 
 enum class TriggerType {
+	None,
 	Volume,
 	Media,
 	Brightness
@@ -22,11 +24,12 @@ enum class TriggerReason {
 class FlyoutTrigger
 {
 public:
-	FlyoutTrigger();
+	FlyoutTrigger(Measure*);
 	~FlyoutTrigger();
 
 	static FlyoutTrigger* instance;
 	static FlyoutHandler* parentHandler;
+	static TriggerType triggerType;
 	static UINT shellMessageHookId;
 	bool isHookActive = false;
 
@@ -37,10 +40,6 @@ private:
 	HHOOK skinHook = NULL;
 	
 	static void TriggerFlyout(TriggerType);
-	static LRESULT CALLBACK GetMsgProc(int, WPARAM, LPARAM);
 	static LRESULT CALLBACK SkinWndProc(int, WPARAM, LPARAM);
-	void OnVolumeChanged();
-	void OnBrightnessChanged();
-	void OnMediaChanged();
 };
 

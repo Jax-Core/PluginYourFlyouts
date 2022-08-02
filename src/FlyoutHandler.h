@@ -1,6 +1,7 @@
 #pragma once
-#include "YourFlyouts.h"
-#include "psapi.h" // GetModuleBaseName()
+#include "DispatchTimer.h"
+
+enum class TriggerType;
 class FlyoutTrigger;
 
 class FlyoutHandler
@@ -32,12 +33,7 @@ public:
 private:
 	bool _hasFlyoutCreated = false;
 	HWINEVENTHOOK HHookID = NULL;
-	HANDLE hTimer = NULL;
-
-	// timer variables
-	HANDLE hTimerQueue = NULL;
-	UINT_PTR _timerHandle = NULL;
-	bool _isTimerRunning = false;
+	DispatchTimer* _timer = NULL;
 
 	// hooks shell window events
 	void Hook();
@@ -45,9 +41,6 @@ private:
 	void Rehook();
 	void TryRehook();
 
-	// not really using the timer functions
-	void SetTimer();
-	void KillTimer();
 	static void CALLBACK TimerProc(PVOID, BOOLEAN);
 
 	// windows event procedure
@@ -66,6 +59,8 @@ private:
 	void OnFlyoutShown();
 	void OnFlyoutDestroyed();
 	void OnFlyoutHidden();
+
+	void OnChangeAction();
 
 	// helper functions
 	static DWORD GetShellProcessId();

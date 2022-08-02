@@ -36,9 +36,10 @@ PLUGIN_EXPORT void Reload(void* data, void* rm, double* maxValue)
 
 	flyoutHandler->AddMeasure(measure);
 
-	measure->volumeChangeAction = RmReadString(rm, L"VolumeChangeAction", L"");
 	measure->brightnessChangeAction = RmReadString(rm, L"BrightnessChangeAction", L"");
+	measure->flightModeChangeAction = RmReadString(rm, L"FlightModeChangeAction", L"");
 	measure->mediaChangeAction = RmReadString(rm, L"MediaChangeAction", L"");
+	measure->volumeChangeAction = RmReadString(rm, L"VolumeChangeAction", L"");
 }
 
 PLUGIN_EXPORT double Update(void* data)

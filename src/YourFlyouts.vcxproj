@@ -22,11 +22,13 @@
     <ResourceCompile Include="YourFlyouts.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DispatchTimer.cpp" />
     <ClCompile Include="FlyoutHandler.cpp" />
     <ClCompile Include="FlyoutTrigger.cpp" />
     <ClCompile Include="YourFlyouts.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DispatchTimer.h" />
     <ClInclude Include="FlyoutHandler.h" />
     <ClInclude Include="FlyoutTrigger.h" />
     <ClInclude Include="YourFlyouts.h" />

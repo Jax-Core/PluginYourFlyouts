@@ -1,5 +1,7 @@
+#include "YourFlyouts.h"
 #include "FlyoutHandler.h"
 #include "FlyoutTrigger.h"
+#include "psapi.h" // GetModuleBaseName()
 
 std::vector<Measure*> FlyoutHandler::measures;
 FlyoutHandler* FlyoutHandler::instance;
@@ -11,7 +13,10 @@ FlyoutHandler::FlyoutHandler()
 
 FlyoutHandler::~FlyoutHandler()
 {
+	delete _timer;
+	_timer = NULL;
 	delete trigger;
+	trigger = NULL;
 }
 
 void FlyoutHandler::Initialize(Measure* measure)
@@ -19,9 +24,8 @@ void FlyoutHandler::Initialize(Measure* measure)
 	instance = this;
 	_hasFlyoutCreated = GetAllInfos();
 	Hook();
-	trigger = new FlyoutTrigger;
-	trigger->RegisterShellHook(measure);
-	trigger->Hook(measure);
+	trigger = new FlyoutTrigger(measure);
+	_timer = new DispatchTimer(3000, TimerProc, this);
 }
 
 void FlyoutHandler::Update(int id)
@@ -71,7 +75,7 @@ void FlyoutHandler::Hook()
 			EVENT_OBJECT_CREATE,
 			EVENT_OBJECT_STATECHANGE,
 			NULL, WinEventProc,
-			ShellProcessId, NULL, 
+			ShellProcessId, NULL,
 			WINEVENT_OUTOFCONTEXT
 		);
 		if (HHookID == NULL)
@@ -105,21 +109,9 @@ void FlyoutHandler::TryRehook()
 	ShellProcessId = GetShellProcessId();
 	if (NULL != ShellProcessId)
 	{
+		_timer->Stop();
 		Rehook();
 	}
-}
-
-void FlyoutHandler::SetTimer()
-{
-	hTimerQueue = CreateTimerQueue();
-	instance->_isTimerRunning = CreateTimerQueueTimer(&instance->hTimer, instance->hTimerQueue, &TimerProc, instance, 3000, 3000, WT_EXECUTEINTIMERTHREAD) != 0;
-}
-
-void FlyoutHandler::KillTimer()
-{
-	if (!_isTimerRunning)
-		return;
-	while(_isTimerRunning = !DeleteTimerQueueEx(hTimerQueue, INVALID_HANDLE_VALUE));
 }
 
 void FlyoutHandler::TimerProc(PVOID lpParam, BOOLEAN TimerOrWaitFired)
@@ -184,21 +176,61 @@ void FlyoutHandler::WinEventProc(
 
 void FlyoutHandler::OnFlyoutShown()
 {
-	Log(LOG_DEBUG, L"Native flyout shown!");
+	Log(LOG_NOTICE, L"Native flyout shown!");
 	HideNativeFlyout();
+	OnChangeAction();
 	// PermanentlyHideNativeFlyout();
 }
 
 void FlyoutHandler::OnFlyoutDestroyed()
 {
 	Log(LOG_DEBUG, L"Native flyout destroyed!");
-	Unhook();
+	
+	HWndDUI = NULL;
+	HWndHost = NULL;
+	ShellProcessId = NULL;
+	_hasFlyoutCreated = false;
+	_timer->Start();
 }
 
 void FlyoutHandler::OnFlyoutHidden()
 {
 	Log(LOG_DEBUG, L"Native flyout hidden!");
 	// ShowNativeFlyout();
+}
+
+void FlyoutHandler::OnChangeAction()
+{
+	switch (trigger->triggerType)
+	{
+	case TriggerType::Brightness:
+		for (auto measure : measures)
+		{
+			RmExecute(measure->skin, measure->brightnessChangeAction.c_str());
+		}
+		break;
+	case TriggerType::Media:
+		for (auto measure : measures)
+		{
+			RmExecute(measure->skin, measure->mediaChangeAction.c_str());
+		}
+		break;
+	case TriggerType::Volume:
+		for (auto measure : measures)
+		{
+			RmExecute(measure->skin, measure->volumeChangeAction.c_str());
+		}
+		break;
+	case TriggerType::None:
+		for (auto measure : measures)
+		{
+			std::wstring exampleAction = RmReadString(measure->rm, L"ExampleAction", L"");
+			RmExecute(measure->skin, exampleAction.c_str());
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 DWORD FlyoutHandler::GetShellProcessId()
